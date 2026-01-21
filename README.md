@@ -1,4 +1,4 @@
-## Genome assembly of *Puccinia striiformis* f. sp. *hordei* (*Psh*) isolate NP80052
+## Genome assembly of *Puccinia striiformis* f. sp. *hordei* (*Psh*) isolate NP85002
 
 Rita Tam & Julian Rodriguez-Algaba
 
@@ -11,12 +11,12 @@ Rita Tam & Julian Rodriguez-Algaba
 ```bash
 # basecalling
 model=dorado-0.7.2-linux-x64/models/dna_r10.4.1_e8.2_400bps_sup@v5.0.0
-dorado basecaller $model --device cuda:all --emit-fastq pod5/ > PshNP80052.ont.fastq
-gzip PshNP80052.ont.fastq
+dorado basecaller $model --device cuda:all --emit-fastq pod5/ > PshNP85002.ont.fastq
+gzip PshNP85002.ont.fastq
 
 # basic read stats
-seqkit stats --all -T PshNP80052.ont.fastq.gz
-NanoPlot --fastq PshNP80052.ont.fastq.gz --verbose --N50 -o nanoplot
+seqkit stats --all -T PshNP85002.ont.fastq.gz
+NanoPlot --fastq PshNP85002.ont.fastq.gz --verbose --N50 -o nanoplot
 ```
 
 ---
@@ -24,11 +24,11 @@ NanoPlot --fastq PshNP80052.ont.fastq.gz --verbose --N50 -o nanoplot
 ### 2. genome size estimation
 
 ```bash
-jellyfish count -C -m 21 -s 1000000000 PshNP80052.ont.fastq -o PshNP80052.jf
-jellyfish histo PshNP80052.jf > PshNP80052.histo
+jellyfish count -C -m 21 -s 1000000000 PshNP85002.ont.fastq -o PshNP85002.jf
+jellyfish histo PshNP85002.jf > PshNP85002.histo
 ```
 
-then upload k-mer count histogram `PshNP80052.histo` to GenomeScope v2.0 (http://genomescope.org/genomescope2.0/) for visualisation.
+then upload k-mer count histogram `PshNP85002.histo` to GenomeScope v2.0 (http://genomescope.org/genomescope2.0/) for visualisation.
 
 ---
 
@@ -36,20 +36,20 @@ then upload k-mer count histogram `PshNP80052.histo` to GenomeScope v2.0 (http:/
 
 ```bash
 # genome assembly
-hifiasm -t 20 -o PshNP80052 --dual-scaf --telo-m CCCTAA --ont PshNP80052.ont.fastq.gz --h1 PshNP80052.HiC_R1.fastq.gz --h2 PshNP80052.HiC_R2.fastq.gz
-awk '/^S/{print ">"$2"\n"$3}' PshNP80052.hic.hap1.p_ctg.gfa > PshNP80052.hic.hap1.p_ctg.fasta
-awk '/^S/{print ">"$2"\n"$3}' PshNP80052.hic.hap2.p_ctg.gfa > PshNP80052.hic.hap2.p_ctg.fasta
-cat PshNP80052.hic.hap1.p_ctg.fasta PshNP80052.hic.hap2.p_ctg.fasta > PshNP80052.hic.hap12.p_ctg.fasta
+hifiasm -t 20 -o PshNP85002 --dual-scaf --telo-m CCCTAA --ont PshNP85002.ont.fastq.gz --h1 PshNP85002.HiC_R1.fastq.gz --h2 PshNP85002.HiC_R2.fastq.gz
+awk '/^S/{print ">"$2"\n"$3}' PshNP85002.hic.hap1.p_ctg.gfa > PshNP85002.hic.hap1.p_ctg.fasta
+awk '/^S/{print ">"$2"\n"$3}' PshNP85002.hic.hap2.p_ctg.gfa > PshNP85002.hic.hap2.p_ctg.fasta
+cat PshNP85002.hic.hap1.p_ctg.fasta PshNP85002.hic.hap2.p_ctg.fasta > PshNP85002.hic.hap12.p_ctg.fasta
 
 # align reads to assembly
-minimap2 -t 20 -ax map-ont --secondary=no PshNP80052.hic.hap12.p_ctg.fasta PshNP80052.ont.fastq.gz | samtools sort -@20 -O BAM -o PshNP80052.hifiasm_raw.bam
-samtools index PshNP80052.hifiasm_raw.bam
+minimap2 -t 20 -ax map-ont --secondary=no PshNP85002.hic.hap12.p_ctg.fasta PshNP85002.ont.fastq.gz | samtools sort -@20 -O BAM -o PshNP85002.hifiasm_raw.bam
+samtools index PshNP85002.hifiasm_raw.bam
 
 # compute mean per-base coverage across 10kbp windows
-samtools faidx PshNP80052.hic.hap12.p_ctg.fasta
-cut -f1,2 PshNP80052.hic.hap12.p_ctg.fasta.fai > genome_file.txt
+samtools faidx PshNP85002.hic.hap12.p_ctg.fasta
+cut -f1,2 PshNP85002.hic.hap12.p_ctg.fasta.fai > genome_file.txt
 bedtools makewindows -g genome_file.txt -w 10000 > genome_file.window_10kbp.bed
-bamtocov --regions genome_file.window_10kbp.bed --report windows-stats.tsv PshNP80052.hifiasm_raw.bam > coverage.bed
+bamtocov --regions genome_file.window_10kbp.bed --report windows-stats.tsv PshNP85002.hifiasm_raw.bam > coverage.bed
 ```
 **assembly blast check**
 
@@ -57,11 +57,11 @@ Contigs/scaffolds in raw hifiasm assembly were split into 1Mbp chunks for parall
 
 ```bash
 # split assembly into 1Mbp chunks
-python split_genome.py PshNP80052.hic.hap12.p_ctg.fasta PshNP80052_chunks
+python split_genome.py PshNP85002.hic.hap12.p_ctg.fasta PshNP85002_chunks
 # edit config.yaml then blast chunks in parallel with snakemake
 snakemake -j 1000 --max-jobs-per-second 2 --use-envmodules --keep-going
 # concatenate blast results
-cat PshNP80052_blast_output/*.blast > all.blast
+cat PshNP85002_blast_output/*.blast > all.blast
 ```
 
 ---
@@ -118,20 +118,20 @@ patterns = {
 ```bash
 # bash juicer_3ddna.sh sample_name restriction_enzyme ref_fasta hic1 hic2 working_dir
 bash juicer_3ddna.sh \
-    PshNP80052 \
+    PshNP85002 \
     DpnII-HinFI-MseI-DdeI \
-    PshNP80052.hic.hap12.p_ctg.fasta \
-    PshNP80052.HiC_R1.fastq.gz  \
-    PshNP80052.HiC_R2.fastq.gz \
+    PshNP85002.hic.hap12.p_ctg.fasta \
+    PshNP85002.HiC_R1.fastq.gz  \
+    PshNP85002.HiC_R2.fastq.gz \
     .
 ```
 
-Output files in `3d-dna/PshNP80052.0.assembly` and `3d-dna/PshNP80052.0.hic` were imported into Juicebox for heatmap visualisation, manual scaffolding (only needed for a few chromosomes), haplotype assignment and re-orientation. 
+Output files in `3d-dna/PshNP85002.0.assembly` and `3d-dna/PshNP85002.0.hic` were imported into Juicebox for heatmap visualisation, manual scaffolding (only needed for a few chromosomes), haplotype assignment and re-orientation. 
 
 Once happy with the results, run 3d-dna post review to introduce gaps at contig junctions to form new scaffolds. 36 chromosomal scaffolds obtained. 
 
 ```bash
-run-asm-pipeline-post-review.sh -g 5000 --review PshNP80052.0.reviewed.assembly references/PshNP80052.hic.hap12.p_ctg.fasta aligned/merged_nodups.txt
+run-asm-pipeline-post-review.sh -g 5000 --review PshNP85002.0.reviewed.assembly references/PshNP85002.hic.hap12.p_ctg.fasta aligned/merged_nodups.txt
 ```
 
 ---
@@ -142,13 +142,13 @@ run-asm-pipeline-post-review.sh -g 5000 --review PshNP80052.0.reviewed.assembly 
 
 ```bash
 # basic assembly stats
-seqkit stats --all -T PshNP80052.final.fasta
+seqkit stats --all -T PshNP85002.final.fasta
 
 # count telomeres
-FindTelomeres.py PshNP80052.final.fasta
+FindTelomeres.py PshNP85002.final.fasta
 
 # busco completeness
-busco -i PshNP80052.final.fasta -l basidiomycota -m DNA -t 24
+busco -i PshNP85002.final.fasta -l basidiomycota -m DNA -t 24
 
 # k-mer commpleteness
 !!!! to-do !!!!
@@ -156,17 +156,17 @@ busco -i PshNP80052.final.fasta -l basidiomycota -m DNA -t 24
 
 **count within- and cross-haplotype Hi-C contact links**
 
-Generate HiC contact matrices with HiC-Pro. Iutput files prep, configuration (ligation sites set as above; minimum MAPQ threshold set to 20) and HiC-Pro execution are automated in `hic/hicpro.sh`
+Generate HiC contact matrices with HiC-Pro. Input files prep, configuration (ligation sites set as above; minimum MAPQ threshold set to 20) and HiC-Pro execution are automated in `hic/hicpro.sh`
 ```bash
-mkdir -p hicpro/PshNP80052
-bash hicpro.sh -g PshNP80052.final.fasta -s PshNP80052 --hic1 PshNP80052.HiC_R1.fastq.gz --hic2 PshNP80052.HiC_R2.fastq.gz -o hicpro/PshNP80052
+mkdir -p hicpro/PshNP85002
+bash hicpro.sh -g PshNP85002.final.fasta -s PshNP85002 --hic1 PshNP85002.HiC_R1.fastq.gz --hic2 PshNP85002.HiC_R2.fastq.gz -o hicpro/PshNP85002
 ```
 
 Count Hi-C contacts from raw matrix for within- and cross-haplotype link statistics and generate a circos plot using codes in https://github.com/ritatam/HiC-Analysis (special thanks to Runpeng Luo who authored the scripts). In the forked repo I only made the haplotype link statistics report more explicit.
 
 ```bash
 # get hicpro raw matrix (window size 20000) and bed file
-cp hicpro/PshNP80052/mapq20_output/hic_results/matrix/PshNP80052/raw/20000/* .
+cp hicpro/PshNP85002/mapq20_output/hic_results/matrix/PshNP85002/raw/20000/* .
 
 # prepare haplotype chromosome id files
 >na.lst
@@ -178,23 +178,23 @@ for h in {A,B}; do
 done
 
 # generate report, circos plot and contact histogram across windows
-python hic_analysis.py hapA.lst hapB.lst na.lst PshNP80052_20000_abs.bed PshNP80052_20000.matrix . 20000
+python hic_analysis.py hapA.lst hapB.lst na.lst PshNP85002_20000_abs.bed PshNP85002_20000.matrix . 20000
 ```
 ---
 ### 6. gene annotation
 
 **liftover from reference annotations**
 
-Full dikaryotic gene annotations (hapA + hapB) from reference (Pst104E/AZ2) were lifted onto each PshNP80052 haplotype, one at a time. 
+Full dikaryotic gene annotations (hapA + hapB) from reference (Pst104E/AZ2) were lifted onto each PshNP85002 haplotype, one at a time. 
 ```bash
 for n in {1..18}; do echo -e "chr${n}A,chr${n}${hap}\nchr${n}B,chr${n}${hap}" >> chroms_hap${hap}.txt; done
 # run liftoff
-liftoff -g Pst104E_v3.9.gene_anno.gff3 -chroms chroms_hap${hap}.txt -o output/PshNP80052_hap${hap}.Pst104Ev3.9.liftoff.gff3 -dir output/PshNP80052_hap${hap}.Pst104Ev3.9.liftoff_intermediate_files -p 16 -u output/PshNP80052_hap${hap}.Pst104Ev3.9.unmapped_features.txt PshNP80052_hap${hap}.fasta Pst104Ev3.9.fasta
+liftoff -g Pst104E_v3.9.gene_anno.gff3 -chroms chroms_hap${hap}.txt -o output/PshNP85002_hap${hap}.Pst104Ev3.9.liftoff.gff3 -dir output/PshNP85002_hap${hap}.Pst104Ev3.9.liftoff_intermediate_files -p 16 -u output/PshNP85002_hap${hap}.Pst104Ev3.9.unmapped_features.txt PshNP85002_hap${hap}.fasta Pst104Ev3.9.fasta
 # keep only models with valid ORFs
-agat_sp_filter_feature_by_attribute_value.pl --gff PshNP80052_hap${hap}.Pst104Ev3.9.liftoff.gff3 --attribute valid_ORFs --value 0 --test "=" --type gene -o PshNP80052_hap${hap}.valid_ORFs.gff3 
+agat_sp_filter_feature_by_attribute_value.pl --gff PshNP85002_hap${hap}.Pst104Ev3.9.liftoff.gff3 --attribute valid_ORFs --value 0 --test "=" --type gene -o PshNP85002_hap${hap}.valid_ORFs.gff3 
 # re-number the gene models
-funannotate util gff-rename -g PshNP80052_hap${hap}.valid_ORFs.gff3 -f PshNP80052_hap${hap}.fasta -o PshNP80052_hap${hap}.valid_ORFs.renum.gff3 --locus_tag PshNP80052 --numbering 1
-sed 's/;Alias=.*//g' PshNP80052_hap${hap}.valid_ORFs.renum.gff3 > PshNP80052_hap${hap}.104e-liftoff.gff3
+funannotate util gff-rename -g PshNP85002_hap${hap}.valid_ORFs.gff3 -f PshNP85002_hap${hap}.fasta -o PshNP85002_hap${hap}.valid_ORFs.renum.gff3 --locus_tag PshNP85002 --numbering 1
+sed 's/;Alias=.*//g' PshNP85002_hap${hap}.valid_ORFs.renum.gff3 > PshNP85002_hap${hap}.104e-liftoff.gff3
 ```
 Repeated for AZ2. (Note the chromosome assignments were different in AZ2, so `chroms_hap${hap}.txt` was adjusted accordingly for liftoff)
 
@@ -203,9 +203,9 @@ Repeated for AZ2. (Note the chromosome assignments were different in AZ2, so `ch
 (Note: I attempted using augustus training parameters generated for evidence-based gene annotations of Pst104E (source [here](https://genome.cshlp.org/content/35/6/1364.full.pdf+html)). However the results missed a lot BUSCOs for some reason; default parameters yield the best results for our Psh so far, so I chose to go with it)
 
 ```bash
-funannotate predict -i PshNP80052_hap${hap}.masked.fasta -o hap${hap}/funannotate_abinitio  --species "Puccinia striiformis" --isolate PshNP80052_hap${hap} --cpus 24 --optimize_augustus
+funannotate predict -i PshNP85002_hap${hap}.masked.fasta -o hap${hap}/funannotate_abinitio  --species "Puccinia striiformis" --isolate PshNP85002_hap${hap} --cpus 24 --optimize_augustus
 
-cat hapA/funannotate_abinitio/predict_results/Puccinia_striiformis_PshNP80052_hapA.gff3 hapB/funannotate_abinitio/predict_results/Puccinia_striiformis_PshNP80052_hapB.gff3 > PshNP80052.abinitio.gff3
+cat hapA/funannotate_abinitio/predict_results/Puccinia_striiformis_PshNP85002_hapA.gff3 hapB/funannotate_abinitio/predict_results/Puccinia_striiformis_PshNP85002_hapB.gff3 > PshNP85002.abinitio.gff3
 ```
 
 **Merging of liftoff-derived and ab initio annotations**
@@ -227,30 +227,30 @@ See `gene_annotation/functional_annotation.sh`.
 ### 8. mtDNA assembly
 
 ```bash
-# concatenate PshNP80052 assembly and AZ2's mtDNA contig for baiting
-cat PshNP80052.final.fasta AZ2mtDNA.fasta > PshNP80052_AZ2mtDNA.fasta
+# concatenate PshNP85002 assembly and AZ2's mtDNA contig for baiting
+cat PshNP85002.final.fasta AZ2mtDNA.fasta > PshNP85002_AZ2mtDNA.fasta
 
 # map reads to the concatenated assembly
-minimap -ax map-ont --secondary=no PshNP80052_AZ2mtDNA.fasta PshNP80052.ont.fastq.gz | samtools sort -@20 -O BAM -o PshNP80052.PshNP80052_AZ2mtDNA.bam
-samtools index PshNP80052.PshNP80052_AZ2mtDNA.bam
+minimap -ax map-ont --secondary=no PshNP85002_AZ2mtDNA.fasta PshNP85002.ont.fastq.gz | samtools sort -@20 -O BAM -o PshNP85002.PshNP85002_AZ2mtDNA.bam
+samtools index PshNP85002.PshNP85002_AZ2mtDNA.bam
 
 # extract reads mapped to AZ2 mtDNA. now these are considered mitochondrial reads
-samtools view PshNP80052.PshNP80052_AZ2mtDNA.bam AZ2mtDNA -o PshNP80052.mtDNA.bam
-samtools bam2fq PshNP80052.mtDNA.bam > PshNP80052.mtDNA.fastq
+samtools view PshNP85002.PshNP85002_AZ2mtDNA.bam AZ2mtDNA -o PshNP85002.mtDNA.bam
+samtools bam2fq PshNP85002.mtDNA.bam > PshNP85002.mtDNA.fastq
 
 # filter mtDNA reads by length
 # and subsample down to ~700x to be memory efficient during assembly
-seqkit seq --threads 8 --max-len 120000 --min-len 20000 PshNP80052.mtDNA.fastq > PshNP80052.mtDNA.20-120k.fastq
-seqkit sample -p 0.3 PshNP80052.mtDNA.20-120k.fastq > PshNP80052.mtDNA.20-120k.subsamp0.3.fastq
+seqkit seq --threads 8 --max-len 120000 --min-len 20000 PshNP85002.mtDNA.fastq > PshNP85002.mtDNA.20-120k.fastq
+seqkit sample -p 0.3 PshNP85002.mtDNA.20-120k.fastq > PshNP85002.mtDNA.20-120k.subsamp0.3.fastq
 
 # hifiasm
-hifiasm --ont --primary -t 24 -f 0 -o hifiasm PshNP80052.mtDNA.20-120k.subsamp0.3.fastq
+hifiasm --ont --primary -t 24 -f 0 -o hifiasm PshNP85002.mtDNA.20-120k.subsamp0.3.fastq
 
 # extract circular contig
 awk '$1 ~ /^>.*c$/ {print; getline; print}' hifiasm.p_ctg.fasta > hifiasm.p_ctg.circular.fasta
 
 # map the mtDNA reads back to the assembled circular contig to inspect alignment
-cp hifiasm.p_ctg.circular.fasta PshNP80052.mtDNA_candidate.fasta
-minimap2 -ax map-ont PshNP80052.mtDNA_candidate.fasta PshNP80052.mtDNA.20-120k.subsamp0.3.fastq | samtools sort -O BAM -o PshNP80052.mtDNA_candidate.bam
-samtools index PshNP80052.mtDNA_candidate.bam
+cp hifiasm.p_ctg.circular.fasta PshNP85002.mtDNA_candidate.fasta
+minimap2 -ax map-ont PshNP85002.mtDNA_candidate.fasta PshNP85002.mtDNA.20-120k.subsamp0.3.fastq | samtools sort -O BAM -o PshNP85002.mtDNA_candidate.bam
+samtools index PshNP85002.mtDNA_candidate.bam
 ```

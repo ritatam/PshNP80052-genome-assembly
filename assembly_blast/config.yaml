@@ -1,9 +1,9 @@
 # input directory containing all query fasta. read fastq must be converted to fasta format.
-input_dir: PshNP80052_chunks
+input_dir: PshNP85002_chunks
 
 # output directory for storing blast report files (*.blast).
 # will be created if it doesn't exist
-output_blast_dir: PshNP80052_blast_output
+output_blast_dir: PshNP85002_blast_output
 
 ### BLAST SETTINGS ###
 blast_env: "/g/data/xf3/miniconda/envs/blast"
