@@ -1,5 +1,7 @@
 ## Genome assembly of *Puccinia striiformis* f. sp. *hordei* (*Psh*) isolate NP80052
 
+Rita Tam & Julian Rodriguez-Algaba
+
 **/!\ To keep up with current haplotype naming conventions, we renamed haplotype A to haplotype 1, and haplotype B to haplotype 2, in the manuscript.**
 
 ---
