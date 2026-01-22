@@ -260,4 +260,7 @@ awk '$1 ~ /^>.*c$/ {print; getline; print}' hifiasm.p_ctg.fasta > hifiasm.p_ctg.
 cp hifiasm.p_ctg.circular.fasta PshNP85002.mtDNA_candidate.fasta
 minimap2 -ax map-ont PshNP85002.mtDNA_candidate.fasta PshNP85002.mtDNA.20-120k.subsamp0.3.fastq | samtools sort -O BAM -o PshNP85002.mtDNA_candidate.bam
 samtools index PshNP85002.mtDNA_candidate.bam
+
+# convert mfannot annotations to gff3
+agat_convert_mfannot2gff.pl -i PshNP85002.mtDNA_candidate.fasta.new -o PshNP85002.mtDNA_candidate.fasta.gff3
 ```
