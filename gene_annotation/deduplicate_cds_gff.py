@@ -7,8 +7,8 @@ def extract_cds_coordinates(gene_id_group):
     """
     for every gene id, get all unique transcript IDs and their CDS coordinates as a list of tuples,
     and turn it into a dictionary.
-    e.g. {'Pst198E_000202-T1': [(809529, 810372), (810511, 810590), (810659, 810771)],
-          'Pst198E_000202-T2': [(809529, 810372), (810511, 810590), (812266, 812414)]}
+    e.g. {'Pst104E_000202-T1': [(809529, 810372), (810511, 810590), (810659, 810771)],
+          'Pst104E_000202-T2': [(809529, 810372), (810511, 810590), (812266, 812414)]}
     """
     coords_dict = {}
     transcript_ids = sorted(gene_id_group["transcript_ID"].unique())

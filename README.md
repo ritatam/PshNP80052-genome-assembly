@@ -2,7 +2,7 @@
 
 Rita Tam & Julian Rodriguez-Algaba
 
-**/!\ To keep up with current haplotype naming conventions, we renamed haplotype A to haplotype 1, and haplotype B to haplotype 2, in the manuscript.**
+**/!\ To keep up with current haplotype naming conventions, we referred haplotype A as haplotype 1, and haplotype B as haplotype 2, in our manuscript.**
 
 ---
 
@@ -149,9 +149,16 @@ FindTelomeres.py PshNP85002.final.fasta
 
 # busco completeness
 busco -i PshNP85002.final.fasta -l basidiomycota -m DNA -t 24
+busco -i PshNP85002_hapA.fasta -l basidiomycota -m DNA -t 24
+busco -i PshNP85002_hapB.fasta -l basidiomycota -m DNA -t 24
 
-# k-mer commpleteness
-!!!! to-do !!!!
+# k-mer commpleteness and consensus quality 
+# build k-mer database from sequencing reads (k=21)
+meryl k=21 count output reads.k21.meryl PshNP85002.ont.fastq.gz
+# run Merqury on the combined haplotype assembly and individually
+merqury.sh reads.k21.meryl PshNP85002.final.fasta PshNP85002_merqury_combined
+merqury.sh reads.k21.meryl PshNP85002_hapA.fasta PshNP85002_merqury_hapA
+merqury.sh reads.k21.meryl PshNP85002_hapB.fasta PshNP85002_merqury_hapB
 ```
 
 **count within- and cross-haplotype Hi-C contact links**
@@ -220,7 +227,7 @@ See `gene_annotation/functional_annotation.sh`.
 
 ### 7. karyoplot
 
-!!!to-do!!!
+See `karyoplot.R`
 
 ---
 

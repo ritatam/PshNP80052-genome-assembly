@@ -181,11 +181,6 @@ funannotate annotate \
 
 
 # add tRNA back, but note that all other intermedate files from final funannotate annotate steps will be unusable after this step because numbers will change
-export FUNANNOTATE_DB=gene_annotation/funannotate_db
-hap=hapB
-ref=assembly/curated_assembly/PshNP85002_${hap}.final.fasta
-numbering=17810
-
 mkdir -p liftoff_abinitio_combined/functional_annotation/11_add_tRNA
 cd liftoff_abinitio_combined/functional_annotation/11_add_tRNA
 conda activate /home/groups/schwessinger/condaEnvs/jupyter
@@ -215,7 +210,7 @@ grep -P "\tmRNA\t" PshNP85002.liftoff_abinitio.final.${hap}.gff3 | grep "SECRETE
 grep -F -f PshNP85002.liftoff_abinitio.final.${hap}.secretome.tmp PshNP85002.liftoff_abinitio.final.${hap}.gff3 > PshNP85002.liftoff_abinitio.final.${hap}.secretome.gff3
 rm PshNP85002.liftoff_abinitio.final.${hap}.secretome.tmp
 
-# end of gene annotation.
+# end of gene annotation!
 
 # combine annotations into full genome set
 conda activate /home/groups/schwessinger/condaEnvs/common-tools
