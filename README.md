@@ -2,9 +2,21 @@
 
 Rita Tam & Julian Rodriguez-Algaba
 
-**/!\ To keep up with current haplotype naming conventions, we referred haplotype A as haplotype 1, and haplotype B as haplotype 2, in our manuscript.**
+*/!\ To keep up with current haplotype naming conventions, we referred haplotype A as haplotype 1, and haplotype B as haplotype 2, in our manuscript.*
+
+
+
+1. [simplex ONT basecalling & read assessment](#1-simplex-ont-basecalling--read-assessment)
+2. [genome size estimation](#2-genome-size-estimation)
+3. [genome assembly & clean up](#3-genome-assembly--clean-up)
+4. [Hi-C phasing & scaffolding](#4-hi-c-phasing--scaffolding)
+5. [assembly evaluation](#5-assembly-evaluation)
+6. [gene annotation](#6-gene-annotation)
+7. [karyoplot](#7-karyoplot)
+8. [mtDNA assembly](#8-mtdna-assembly)
 
 ---
+
 
 ### 1. simplex ONT basecalling & read assessment
 
