@@ -1,10 +1,10 @@
 ## Genome assembly of *Puccinia striiformis* f. sp. *hordei* (*Psh*) isolate NP85002
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18332198.svg)](https://doi.org/10.5281/zenodo.18332198)
+
 Rita Tam & Julian Rodriguez-Algaba
 
 */!\ To keep up with current haplotype naming conventions, we referred haplotype A as haplotype 1, and haplotype B as haplotype 2, in our manuscript.*
-
-
 
 1. [simplex ONT basecalling & read assessment](#1-simplex-ont-basecalling--read-assessment)
 2. [genome size estimation](#2-genome-size-estimation)
